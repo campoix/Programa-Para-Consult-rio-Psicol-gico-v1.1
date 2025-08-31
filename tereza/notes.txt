@@ -1,0 +1,269 @@
+Claro! Para desenvolver um software semelhante ao "Programa Gerenciar Consultório Psicológico v1.0" utilizando a biblioteca CustomTkinter, você pode seguir este guia passo a passo. Este programa inclui funcionalidades como cadastro de pacientes, controle de atendimentos, geração de recibos, relatórios e personalizações visuais.
+
+---
+
+## 🧰 Etapa 1: Configuração Inicial
+
+### Instalação do CustomTkinter
+
+Certifique-se de ter o Python instalado. Em seguida, instale o CustomTkinter com o seguinte comando:([Dev Iniciante][1])
+
+```bash
+pip install customtkinter
+```
+
+
+
+### Estrutura Básica do Projeto
+
+Crie um arquivo principal, por exemplo, `app.py`, com a seguinte estrutura inicial:
+
+```python
+import customtkinter as ctk
+
+ctk.set_appearance_mode("System")  # Modos: "System", "Dark", "Light"
+ctk.set_default_color_theme("blue")  # Temas: "blue", "green", "dark-blue"
+
+class App(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.title("Gerenciador de Consultório Psicológico")
+        self.geometry("800x600")
+        # Aqui você adicionará os frames e widgets
+
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
+```
+
+
+
+---
+
+## 🧱 Etapa 2: Estruturação da Interface com Frames
+
+Utilize `CTkFrame` para organizar a interface em seções, como menu lateral, área principal e rodapé.([Pybeginners][2])
+
+```python
+class App(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.title("Gerenciador de Consultório Psicológico")
+        self.geometry("800x600")
+
+        # Frame do menu lateral
+        self.menu_frame = ctk.CTkFrame(self, width=200)
+        self.menu_frame.pack(side="left", fill="y")
+
+        # Frame principal
+        self.main_frame = ctk.CTkFrame(self)
+        self.main_frame.pack(side="right", fill="both", expand=True)
+
+        # Adicione botões ao menu
+        self.add_menu_buttons()
+
+    def add_menu_buttons(self):
+        buttons = [
+            ("Cadastro de Pacientes", self.show_patient_registration),
+            ("Controle de Atendimentos", self.show_appointments),
+            ("Relatórios", self.show_reports),
+            # Adicione mais botões conforme necessário
+        ]
+        for text, command in buttons:
+            btn = ctk.CTkButton(self.menu_frame, text=text, command=command)
+            btn.pack(pady=10, padx=10, fill="x")
+
+    def show_patient_registration(self):
+        # Lógica para exibir a tela de cadastro de pacientes
+        pass
+
+    def show_appointments(self):
+        # Lógica para exibir o controle de atendimentos
+        pass
+
+    def show_reports(self):
+        # Lógica para exibir os relatórios
+        pass
+```
+
+
+
+---
+
+## 🗂️ Etapa 3: Implementação das Funcionalidades
+
+### Cadastro de Pacientes
+
+Crie uma classe ou função para o formulário de cadastro de pacientes, utilizando widgets como `CTkLabel`, `CTkEntry` e `CTkButton`.([Pybeginners][2])
+
+```python
+class PatientRegistrationFrame(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.pack(fill="both", expand=True)
+
+        ctk.CTkLabel(self, text="Nome:").pack(pady=5)
+        self.name_entry = ctk.CTkEntry(self)
+        self.name_entry.pack(pady=5)
+
+        ctk.CTkLabel(self, text="Data de Nascimento:").pack(pady=5)
+        self.dob_entry = ctk.CTkEntry(self)
+        self.dob_entry.pack(pady=5)
+
+        # Adicione mais campos conforme necessário
+
+        ctk.CTkButton(self, text="Salvar", command=self.save_patient).pack(pady=10)
+
+    def save_patient(self):
+        name = self.name_entry.get()
+        dob = self.dob_entry.get()
+        # Lógica para salvar os dados do paciente
+```
+
+
+
+### Controle de Atendimentos
+
+Implemente uma interface para agendar e visualizar atendimentos, utilizando widgets como `CTkComboBox`, `CTkCalendar` (se disponível) e `CTkButton`.
+
+### Relatórios
+
+Utilize widgets como `CTkTextbox` ou `CTkTreeview` (se compatível) para exibir relatórios filtrados por período, aniversariantes, etc.
+
+---
+
+## 🎨 Etapa 4: Personalizações Visuais
+
+### Temas e Aparência
+
+Você pode alternar entre os modos de aparência e temas disponíveis:([Dev Iniciante][3])
+
+```python
+ctk.set_appearance_mode("Dark")  # Modos: "System", "Dark", "Light"
+ctk.set_default_color_theme("green")  # Temas: "blue", "green", "dark-blue"
+```
+
+
+
+### Personalização de Fundo e Logotipo
+
+Para permitir que o usuário personalize o fundo e o logotipo, você pode utilizar o widget `CTkImage` para exibir imagens e `filedialog` para selecionar arquivos.
+
+```python
+from tkinter import filedialog
+from PIL import Image
+
+def change_background(self):
+    file_path = filedialog.askopenfilename()
+    if file_path:
+        bg_image = ctk.CTkImage(Image.open(file_path))
+        bg_label = ctk.CTkLabel(self.main_frame, image=bg_image, text="")
+        bg_label.place(relx=0.5, rely=0.5, anchor="center")
+```
+
+
+
+---
+
+## 💾 Etapa 5: Persistência de Dados
+
+Para armazenar os dados dos pacientes, atendimentos e configurações, você pode utilizar:
+
+* **SQLite**: Banco de dados leve e embutido.
+* **Arquivos JSON**: Para configurações e dados simples.
+* **Pickle**: Para serializar objetos Python.([Dev Iniciante][1])
+
+Exemplo utilizando SQLite:
+
+```python
+import sqlite3
+
+conn = sqlite3.connect('consultorio.db')
+cursor = conn.cursor()
+
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS pacientes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        data_nascimento TEXT
+    )
+''')
+
+conn.commit()
+conn.close()
+```
+
+
+
+---
+
+## 🔐 Etapa 6: Segurança e Acesso
+
+Implemente um sistema de login simples para proteger o acesso ao sistema:
+
+```python
+class LoginFrame(ctk.CTkFrame):
+    def __init__(self, master, on_success):
+        super().__init__(master)
+        self.pack(fill="both", expand=True)
+        self.on_success = on_success
+
+        ctk.CTkLabel(self, text="Usuário:").pack(pady=5)
+        self.user_entry = ctk.CTkEntry(self)
+        self.user_entry.pack(pady=5)
+
+        ctk.CTkLabel(self, text="Senha:").pack(pady=5)
+        self.pass_entry = ctk.CTkEntry(self, show="*")
+        self.pass_entry.pack(pady=5)
+
+        ctk.CTkButton(self, text="Entrar", command=self.check_login).pack(pady=10)
+
+    def check_login(self):
+        user = self.user_entry.get()
+        password = self.pass_entry.get()
+        if user == "admin" and password == "senha123":
+            self.on_success()
+        else:
+            ctk.CTkLabel(self, text="Credenciais inválidas!", text_color="red").pack()
+```
+
+
+
+---
+
+## 🧪 Etapa 7: Testes e Distribuição
+
+### Testes
+
+Realize testes para garantir que todas as funcionalidades estão operando corretamente.
+
+### Distribuição
+
+Para distribuir o aplicativo como um executável no Windows:
+
+```bash
+pip install pyinstaller
+pyinstaller --onefile app.py
+```
+
+
+
+O executável será gerado na pasta `dist`.([Usandopy][4])
+
+---
+
+## 📚 Recursos Adicionais
+
+* Documentação oficial do CustomTkinter: ([GitHub][5])
+* Curso de CustomTkinter em português: ([GitHub][6])
+* CTkDesigner: Ferramenta de design visual para CustomTkinter. ([Reddit][7])([Dev Iniciante][1])
+
+Se precisar de assistência adicional ou exemplos específicos de código, estou à disposição para ajudar!
+
+[1]: https://www.deviniciante.com/customtkinter/Introducao-ao-CustomTkinter/?utm_source=chatgpt.com "Introdução ao CustomTkinter"
+[2]: https://www.pybeginners.com/customtkinter/how-to-create-ctkframe-in-customtkinter/?utm_source=chatgpt.com "How to Create CTkFrame in CustomTkinter"
+[3]: https://www.deviniciante.com/customtkinter/Comecando-com-CustomTkinter/?utm_source=chatgpt.com "Começando com CustomTkinter"
+[4]: https://www.usandopy.com/customtkinter/como-criar-ctkframe-no-customtkinter/?utm_source=chatgpt.com "Como criar CTkFrame no CustomTkinter"
+[5]: https://github.com/TomSchimansky/CustomTkinter?utm_source=chatgpt.com "GitHub - TomSchimansky/CustomTkinter: A modern and customizable python UI-library based on Tkinter"
+[6]: https://github.com/VILHALVA/CURSO-DE-CUSTOMTKINTER/blob/main/MANUAL.md?utm_source=chatgpt.com "CURSO-DE-CUSTOMTKINTER/MANUAL.md at main · VILHALVA/CURSO-DE-CUSTOMTKINTER · GitHub"
+[7]: https://www.reddit.com/r/Tkinter/comments/18yzcir?utm_source=chatgpt.com "No Code GUI designer for CustomTkinter - CTkDesigner"
